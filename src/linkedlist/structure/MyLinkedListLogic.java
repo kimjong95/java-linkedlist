@@ -25,21 +25,21 @@ public class MyLinkedListLogic implements MyLinkedList {
 
 	@Override
 	public boolean contains(String element) {
-		// element가 포함되어있으면 true 그렇지 않으면 false 반환	
+		// element가 포함되어있으면 true 그렇지 않으면 false 반환
 		Node findNode = head;
-		for(int i = 0; i<size ; i++) {
-			if(findNode.data.equals(element)) {
+		for (int i = 0; i < size; i++) {
+			if (findNode.data.equals(element)) {
 				return true;
 			}
 			findNode = findNode.nextNode;
-		}		
+		}
 		return false;
 	}
 
 	@Override
 	public MyStringIterator iterator() {
 		//
-		return null;
+		return new MyStringIterator();
 	}
 
 	@Override
@@ -48,12 +48,9 @@ public class MyLinkedListLogic implements MyLinkedList {
 		Node newNode = new Node(element);
 
 		if (size == 0) {
-			head = newNode;
-			tail = head;
+			addFirst(newNode);
 		} else {
-			tail.nextNode = newNode;
-			newNode.preNode = tail;
-			tail = newNode;
+			addLast(newNode);
 		}
 		size++;
 	}
@@ -63,10 +60,13 @@ public class MyLinkedListLogic implements MyLinkedList {
 		// LinkedList 의 index 에 element값 삽입
 		Node newNode = new Node(element);
 
-		Node findNode = nodeOfListIndex(index);
+		if (index == 0) {
+			addFirst(newNode);
+		} else {
+			Node findNode = nodeOfListIndex(index);
 
-		pushOfLink(findNode.preNode, newNode, findNode);
-
+			pushOfLink(findNode.preNode, newNode, findNode);
+		}
 		size++;
 	}
 
@@ -81,10 +81,14 @@ public class MyLinkedListLogic implements MyLinkedList {
 		// LinkedList의 element 값 삭제 뒤의 list를 당겨옴
 		Node findNode = findNodeToElement(element);
 
-		pullOfLink(findNode.preNode, findNode, findNode.nextNode);
+		if (findNode == head) {
+			removeFirst(findNode);
+			clearInNode(findNode);
+		} else {
+			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
 
-		clearInNode(findNode);
-		
+			clearInNode(findNode); // help GC
+		}
 		size--;
 	}
 
@@ -93,10 +97,14 @@ public class MyLinkedListLogic implements MyLinkedList {
 		// index위치의 값 삭제 뒤의 list를 당겨옴
 		Node findNode = nodeOfListIndex(index);
 
-		pullOfLink(findNode.preNode, findNode, findNode.nextNode);
-		
-		clearInNode(findNode);
+		if (findNode == head) {
+			removeFirst(findNode);
+			clearInNode(findNode);
+		} else {
+			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
 
+			clearInNode(findNode); // help GC
+		}
 		size--;
 	}
 
@@ -105,66 +113,81 @@ public class MyLinkedListLogic implements MyLinkedList {
 		// sourceList 값을 LinkedList의 맨뒤부터 삽입
 		String[] array = new String[sourceList.size()];
 		array = sourceList.toArray();
-		for(int i=0; i<(sourceList.size()); i++) {		
-			this.add(array[i]);		
-		}			
+		for (int i = 0; i < (sourceList.size()); i++) {
+			this.add(array[i]);
+		}
 	}
 
 	@Override
 	public void clear() {
 		// 클.리.어
-		for(int i = 0; i<size; i++) {
+		for (int i = 0; i < size; i++) {
 			head.data = null;
 			head.preNode = null;
-			
-			head = head.nextNode;			
+
+			head = head.nextNode;
 		}
-		
+
 		head = tail;
-		
+
 		size = 0;
-		
+
 	}
 
 	@Override
 	public String[] toArray() {
 		// 배열형태로 반환
 		String[] array = new String[size];
-		
+
 		Node findNode = head;
-		for(int i = 0; i<size ; i++) {
-			
+		for (int i = 0; i < size; i++) {
+
 			array[i] = findNode.data;
-			
+
 			findNode = findNode.nextNode;
-		}		
+		}
 		return array;
 	}
 
 	public class MyStringIterator implements StringIterator {
 		//
+		private Node returnNode;
+		private Node nextNode;
+		private int index;
+
+		public MyStringIterator() {
+			//
+			nextNode = head;
+			index = 0;
+		}
 
 		@Override
 		public String next() {
-			// TODO Auto-generated method stub
-			return null;
+			//
+			returnNode = nextNode;
+			nextNode = nextNode.nextNode;
+			index++;
+
+			return returnNode.data;
 		}
 
 		@Override
 		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
+			//
+			return index < size;
 		}
 
 		@Override
 		public void remove() {
-			// TODO Auto-generated method stub
-
+			//
+			MyLinkedListLogic.this.remove(index - 1);
+			index--;
 		}
 	}
 
 	private class Node {
 		// LinkedList에서 사용할 노드
+
 		private String data;
 		private Node preNode;
 		private Node nextNode;
@@ -210,16 +233,41 @@ public class MyLinkedListLogic implements MyLinkedList {
 			if (findNode.data == element) {
 				break;
 			}
-			
 			findNode = findNode.nextNode;
 		}
 		return findNode;
 	}
-	
+
 	private void clearInNode(Node node) {
 		// 노드의 내용을 null로 초기화
 		node.data = null;
 		node.preNode = null;
 		node.nextNode = null;
+	}
+
+	private void addFirst(Node newNode) {
+		//
+		newNode.nextNode = head;
+		head = newNode;
+
+		if (head.nextNode == null) {
+			tail = head;
+		}
+	}
+
+	private void addLast(Node newNode) {
+		//
+		tail.nextNode = newNode;
+		newNode.preNode = tail;
+		tail = newNode;
+	}
+
+	private void removeFirst(Node removeNode) {
+		//
+		head = removeNode.nextNode;
+
+		if (head == tail) {
+			head.preNode = null;
+		}
 	}
 }
