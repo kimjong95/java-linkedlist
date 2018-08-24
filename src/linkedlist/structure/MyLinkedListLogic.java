@@ -80,9 +80,11 @@ public class MyLinkedListLogic implements MyLinkedList {
 	public void remove(String element) {
 		// LinkedList의 element 값 삭제 뒤의 list를 당겨옴
 		Node findNode = findNodeToElement(element);
-
 		if (findNode == head) {
 			removeFirst(findNode);
+			clearInNode(findNode);
+		} else if (findNode == tail) {
+			removeLast(findNode);
 			clearInNode(findNode);
 		} else {
 			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
@@ -96,9 +98,11 @@ public class MyLinkedListLogic implements MyLinkedList {
 	public void remove(int index) {
 		// index위치의 값 삭제 뒤의 list를 당겨옴
 		Node findNode = nodeOfListIndex(index);
-
 		if (findNode == head) {
 			removeFirst(findNode);
+			clearInNode(findNode);
+		} else if (findNode == tail) {
+			removeLast(findNode);
 			clearInNode(findNode);
 		} else {
 			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
@@ -127,11 +131,8 @@ public class MyLinkedListLogic implements MyLinkedList {
 
 			head = head.nextNode;
 		}
-
 		head = tail;
-
 		size = 0;
-
 	}
 
 	@Override
@@ -141,9 +142,8 @@ public class MyLinkedListLogic implements MyLinkedList {
 
 		Node findNode = head;
 		for (int i = 0; i < size; i++) {
-
+			//
 			array[i] = findNode.data;
-
 			findNode = findNode.nextNode;
 		}
 		return array;
@@ -204,7 +204,9 @@ public class MyLinkedListLogic implements MyLinkedList {
 	private Node nodeOfListIndex(int index) {
 		// index위치의 데이터 반환 (linked List의 index가 없어서 index위치를 찾아서 데이터 반환하는 함수)
 		Node findNode = head;
-
+		if(index > size) {
+			throw new IndexOutOfBoundsException("The index value of the corresponding LinkedList has been exceeded :" + index);
+		}
 		for (int i = 0; i < index; i++) {
 			findNode = findNode.nextNode;
 		}
@@ -221,19 +223,26 @@ public class MyLinkedListLogic implements MyLinkedList {
 
 	private void pullOfLink(Node preNode, Node findNode, Node nextNode) {
 		// 지정된 위치의 노드(findNode) 의 앞 노드(preNode)와 뒤 노드(NextNode)를 연결하는 메소드
+		
 		preNode.nextNode = nextNode;
 		nextNode.preNode = preNode;
+
 	}
 
 	private Node findNodeToElement(String element) {
 		//
 		Node findNode = head;
-
+		int index = 0;
 		while (true) {
+			//
+			if (index == size) {
+				throw new NullPointerException("No element in this LinkedList :" + element);
+			}
 			if (findNode.data == element) {
 				break;
 			}
 			findNode = findNode.nextNode;
+			index += 1;
 		}
 		return findNode;
 	}
@@ -269,5 +278,11 @@ public class MyLinkedListLogic implements MyLinkedList {
 		if (head == tail) {
 			head.preNode = null;
 		}
+	}
+
+	private void removeLast(Node removeNode) {
+		//
+		tail = removeNode.preNode;
+		tail.nextNode = null;
 	}
 }

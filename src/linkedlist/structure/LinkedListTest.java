@@ -24,7 +24,7 @@ public class LinkedListTest {
 		System.out.println("linkedList.contain(Test9) 결과값 :" + linkedList.contains("Test9"));
 		System.out.println("============================================================");
 		
-		linkedList.add(0, "AddTest1");
+		linkedList.add(4, "AddTest1");
 		System.out.println("[add(2, AddTest1) 메소드 후]");
 		System.out.print("현재 linkedList 에 저장된 값은 :");
 		for (int i = 0; i < linkedList.size(); i++) {
@@ -33,8 +33,8 @@ public class LinkedListTest {
 		System.out.println("이고 size 는 (" + linkedList.size() + ") 입니다.");
 		System.out.println("============================================================");
 		
-		linkedList.remove(4);
-		System.out.println("[remove(4) 메소드 후]");
+		linkedList.remove(5);
+		System.out.println("[remove(6) 메소드 후]");
 		System.out.print("현재 linkedList 에 저장된 값은 :");
 		for (int i = 0; i < linkedList.size(); i++) {
 			System.out.print(linkedList.get(i) + ",");
