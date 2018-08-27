@@ -57,6 +57,15 @@ public class LinkedListTest {
 		}
 		System.out.println("\n============================================================");
 		
+		StringIterator listIter = linkedList.iterator();
+		System.out.print("Iterator 사용 List정보 :");
+		System.out.println();
+		while(listIter.hasNext()) {
+			System.out.print(listIter.next());
+		}
+		System.out.println("\n listSize :" + linkedList.size());
+		System.out.println("============================================================");
+		
 		// 새로운 linkedList 추가
 		MyLinkedList addLinkedList = new MyLinkedListLogic();
 

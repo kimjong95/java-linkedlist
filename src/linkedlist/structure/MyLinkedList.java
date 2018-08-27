@@ -1,13 +1,11 @@
 package linkedlist.structure;
 
-import linkedlist.structure.MyLinkedListLogic.MyStringIterator;
-
 public interface MyLinkedList {
 	//
 	int size();
 	boolean empty();
 	boolean contains(String element);
-	MyStringIterator iterator();
+	StringIterator iterator();
 	void add(String element);
 	void add(int index, String element);
 	String get(int index);

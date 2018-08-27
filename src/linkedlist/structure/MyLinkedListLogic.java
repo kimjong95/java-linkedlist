@@ -27,13 +27,15 @@ public class MyLinkedListLogic implements MyLinkedList {
 	public boolean contains(String element) {
 		// element가 포함되어있으면 true 그렇지 않으면 false 반환
 		Node findNode = head;
+		boolean isContains = false;
 		for (int i = 0; i < size; i++) {
 			if (findNode.data.equals(element)) {
-				return true;
+				isContains = true;
+				break;
 			}
 			findNode = findNode.nextNode;
 		}
-		return false;
+		return isContains;
 	}
 
 	@Override
@@ -53,6 +55,7 @@ public class MyLinkedListLogic implements MyLinkedList {
 			addLast(newNode);
 		}
 		size++;
+	
 	}
 
 	@Override
@@ -89,7 +92,7 @@ public class MyLinkedListLogic implements MyLinkedList {
 		} else {
 			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
 
-			clearInNode(findNode); // help GC
+			clearInNode(findNode); 
 		}
 		size--;
 	}
@@ -107,7 +110,7 @@ public class MyLinkedListLogic implements MyLinkedList {
 		} else {
 			pullOfLink(findNode.preNode, findNode, findNode.nextNode);
 
-			clearInNode(findNode); // help GC
+			clearInNode(findNode); 
 		}
 		size--;
 	}
@@ -125,12 +128,13 @@ public class MyLinkedListLogic implements MyLinkedList {
 	@Override
 	public void clear() {
 		// 클.리.어
+		Node tempNode = head;
 		for (int i = 0; i < size; i++) {
-			head.data = null;
-			head.preNode = null;
+			tempNode=  head.nextNode;
+			clearInNode(head);
 
-			head = head.nextNode;
-		}
+			head = tempNode;
+		} 
 		head = tail;
 		size = 0;
 	}
@@ -149,7 +153,7 @@ public class MyLinkedListLogic implements MyLinkedList {
 		return array;
 	}
 
-	public class MyStringIterator implements StringIterator {
+	private class MyStringIterator implements StringIterator {
 		//
 		private Node returnNode;
 		private Node nextNode;
@@ -205,7 +209,7 @@ public class MyLinkedListLogic implements MyLinkedList {
 		// index위치의 데이터 반환 (linked List의 index가 없어서 index위치를 찾아서 데이터 반환하는 함수)
 		Node findNode = head;
 		if(index > size) {
-			throw new IndexOutOfBoundsException("The index value of the corresponding LinkedList has been exceeded :" + index);
+			throw new IndexOutOfBoundsException("The index value of the corresponding LinkedList has been exceeded");
 		}
 		for (int i = 0; i < index; i++) {
 			findNode = findNode.nextNode;
